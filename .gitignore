@@ -1,0 +1,5 @@
+.venv/
+.booksearch/
+__pycache__/
+
+qwen_model/

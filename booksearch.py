@@ -2,33 +2,45 @@ import argparse
 import json
 from pathlib import Path
 import numpy as np
+import spacy
 
 def tokenizer():
     import tiktoken
     return tiktoken.get_encoding('cl100k_base')
 
-def extract_pages(pdf_path):
-    import pymupdf
-    with pymupdf.open(pdf_path) as pdf:
-        for page in pdf:
-            yield page.number + 1, page.get_text('text') # Return each page # + text
+def extract_text(txt_path):
+    return Path(txt_path).read_text(encoding="utf-8") # Return entire text as str
 
-def chunk_pages(pages, tokenizer, size=250, overlap=50):
-    passages = []
-    for page_number, text in pages:
-        tokens = tokenizer.encode(text) # Tokenize
-        
-        for start in range(0, len(tokens), size - overlap):
-            text_chunk = tokenizer.decode(tokens[start : start + size]) # Get tokenized text
-            if text_chunk.strip(): # If text exists
-                passages.append({ # Add page # + text
-                    "page": page_number,
-                    "text": text_chunk,
-                })
-            if start + size >= len(tokens): # Breaks once its larger
-                break
-                
-    return passages
+def chunk_text(text, tokenizer, size=250):
+    nlp = spacy.load("en_core_web_sm")
+    sentences = list(nlp(text).sents)
+
+    chunks, previous = [], None
+    if not sentences:
+        return []
+    start_chunk = sentences[0].start_char
+
+    for curr in sentences:
+        next_chunk = text[start_chunk : curr.end_char]
+
+        if previous and len(tokenizer.encode(next_chunk)) > size:
+            end_chunk = previous.end_char
+            chunks.append({
+                "text": text[start_chunk:end_chunk],
+                "text_position": (start_chunk, end_chunk),
+            })
+
+            start_chunk = previous.start_char  # Start at the beginning of last sentence to overlap
+
+        previous = curr
+
+    end_chunk = previous.end_char
+    chunks.append({
+        "text": text[start_chunk:end_chunk],
+        "text_position": (start_chunk, end_chunk),
+    })
+
+    return chunks
 
 def load_model():
     import torch
@@ -48,8 +60,8 @@ def encode(model, texts, query=False):
     return np.asarray(model.encode(texts, batch_size=8, normalize_embeddings=True, show_progress_bar=not query), dtype=np.float32)
 
 
-def index_book(pdf_path):
-    passages = chunk_pages(extract_pages(pdf_path), tokenizer())
+def index_book(txt_path):
+    passages = chunk_text(extract_text(txt_path), tokenizer())
     texts = [passage["text"] for passage in passages]
     vectors = encode(load_model(), texts)
 
@@ -73,19 +85,17 @@ def search(query):
     best_matches = np.argsort(scores)[::-1][:10]
 
     for i in best_matches:
-        passage = passages[i]
-        print(f"Page {passage['page']}")
-        print(passage["text"], end="\n\n")
+        print(passages[i]["text"], end="\n\n")
 
 def main():
     # Define CLI, takes in command: index or search, then a pdf or query
     parser = argparse.ArgumentParser()
     commands = parser.add_subparsers(dest='command', required=True)
-    commands.add_parser('index').add_argument('pdf') # Index method takes a PDF
+    commands.add_parser('index').add_argument('txt') # Index method takes a .txt
     commands.add_parser('search').add_argument('query') # Query method takes a str
     args = parser.parse_args()
     if args.command == 'index':
-        index_book(args.pdf)
+        index_book(args.txt)
     else:
         search(args.query)
 

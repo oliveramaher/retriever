@@ -1,0 +1,66 @@
+{
+  "book": "The Great Gatsby",
+  "author": "F. Scott Fitzgerald",
+  "sections": [
+    {
+      "section_id": "g1",
+      "chapter": "I",
+      "summary": "Nick and Jordan overhear Tom speaking tensely on the telephone during dinner.",
+      "source_text": "Miss Baker and I exchanged a short glance consciously devoid of\nmeaning. I was about to speak when she sat up alertly and said “Sh!”\nin a warning voice. A subdued impassioned murmur was audible in the\nroom beyond, and Miss Baker leaned forward unashamed, trying to\nhear. The murmur trembled on the verge of coherence, sank down,\nmounted excitedly, and then ceased altogether."
+    },
+    {
+      "section_id": "g2",
+      "chapter": "II",
+      "summary": "Myrtle jokes that Tom should introduce the photographer Mr. McKee to her husband George, so McKee can make a study of him.",
+      "source_text": "“You’ll give McKee a letter of introduction to your husband, so he can\ndo some studies of him.” His lips moved silently for a moment as he\ninvented, “ ‘George B. Wilson at the Gasoline Pump,’ or something like\nthat.”"
+    },
+    {
+      "section_id": "g3",
+      "chapter": "III",
+      "summary": "At Gatsby’s party, Nick cannot find his host; other guests deny knowing where Gatsby is, so Nick retreats to the cocktail table.",
+      "source_text": "As soon as I arrived I made an attempt to find my host, but the two or\nthree people of whom I asked his whereabouts stared at me in such an\namazed way, and denied so vehemently any knowledge of his movements,\nthat I slunk off in the direction of the cocktail table—the only place\nin the garden where a single man could linger without looking\npurposeless and alone."
+    },
+    {
+      "section_id": "g4",
+      "chapter": "IV",
+      "summary": "Guests at Gatsby’s parties circulate a rumor that he is a bootlegger and invent wild stories about his past.",
+      "source_text": "“He’s a bootlegger,” said the young ladies, moving somewhere between\nhis cocktails and his flowers. “One time he killed a man who had found\nout that he was nephew to Von Hindenburg and second cousin to the\ndevil. Reach me a rose, honey, and pour me a last drop into that there\ncrystal glass.”"
+    },
+    {
+      "section_id": "g5",
+      "chapter": "V",
+      "summary": "After Daisy arrives at Gatsby’s house, Gatsby is overwhelmed by her presence and becomes almost speechless with wonder.",
+      "source_text": "He had passed visibly through two states and was entering upon a\nthird. After his embarrassment and his unreasoning joy he was consumed\nwith wonder at her presence. He had been full of the idea so long,\ndreamed it right through to the end, waited with his teeth set, so to\nspeak, at an inconceivable pitch of intensity. Now, in the reaction,\nhe was running down like an over-wound clock."
+    },
+    {
+      "section_id": "g6",
+      "chapter": "VI",
+      "summary": "Daisy is drawn toward the music and romantic atmosphere of Gatsby’s party, while Nick imagines how she might respond to the world upstairs.",
+      "source_text": "Her glance left me and sought the lighted top of the steps, where\n“Three O’Clock in the Morning,” a neat, sad little waltz of that year,\nwas drifting out the open door. After all, in the very casualness of\nGatsby’s party there were romantic possibilities totally absent from\nher world. What was it up there in the song that seemed to be calling\nher back inside? What would happen now in the dim, incalculable hours?\nPerhaps some unbelievable guest would arrive, a person infinitely rare\nand to be marvelled at, some authentically radiant young girl who with\none fresh glance at Gatsby, one moment of magical encounter, would\nblot out those five years of unwavering devotion."
+    },
+    {
+      "section_id": "g7",
+      "chapter": "VII",
+      "summary": "Tom panics when Daisy and his mistress both seem beyond his control, and he accelerates to catch Daisy’s car.",
+      "source_text": "There is no confusion like the confusion of a simple mind, and as we\ndrove away Tom was feeling the hot whips of panic. His wife and his\nmistress, until an hour ago secure and inviolate, were slipping\nprecipitately from his control. Instinct made him step on the\naccelerator with the double purpose of overtaking Daisy and leaving\nWilson behind, and we sped along toward Astoria at fifty miles an\nhour, until, among the spidery girders of the elevated, we came in\nsight of the easygoing blue coupé."
+    },
+    {
+      "section_id": "g8",
+      "chapter": "VIII",
+      "summary": "Gatsby prepares to use his swimming pool for the first time and tells the chauffeur not to take out the damaged car.",
+      "source_text": "At two o’clock Gatsby put on his bathing-suit and left word with the\nbutler that if anyone phoned word was to be brought to him at the\npool. He stopped at the garage for a pneumatic mattress that had\namused his guests during the summer, and the chauffeur helped him to\npump it up. Then he gave instructions that the open car wasn’t to be\ntaken out under any circumstances—and this was strange, because the\nfront right fender needed repair."
+    },
+    {
+      "section_id": "g9",
+      "chapter": "IX",
+      "summary": "After Nick confronts Tom about his role in Gatsby’s death, Nick reluctantly shakes his hand. Tom then casually goes into a jewelry store, underscoring how easily he returns to ordinary life.",
+      "source_text": "I shook hands with him; it seemed silly not to, for I felt suddenly as\nthough I were talking to a child. Then he went into the jewellery\nstore to buy a pearl necklace—or perhaps only a pair of cuff\nbuttons—rid of my provincial squeamishness forever."
+    },
+    {
+      "section_id": "g10",
+      "chapter": "VIII",
+      "summary": "After Gatsby is carried from the pool, the gardener finds George Wilson’s body nearby in the grass.",
+      "source_text": "It was after we started with Gatsby toward the house that the gardener\nsaw Wilson’s body a little way off in the grass, and the holocaust was\ncomplete."
+    }
+  ]
+}
