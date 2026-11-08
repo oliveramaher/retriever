@@ -5,3 +5,4 @@ sentence-transformers>=2.7
 transformers>=4.51
 huggingface-hub>=0.25
 spacy>=3.7
+rank-bm25>=0.2.2
