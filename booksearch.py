@@ -1,8 +1,10 @@
 import argparse
 import json
+import re
 from pathlib import Path
 import numpy as np
 import spacy
+from rank_bm25 import BM25Okapi
 
 def tokenizer():
     import tiktoken
@@ -71,6 +73,23 @@ def index_book(txt_path):
     with open(folder / "passages.json", "w") as file:
         json.dump(passages, file)
 
+def keyword_tokens(text):
+    return re.findall(r"\w+", text.lower()) # Separates into a list of words
+
+def bm25_scores(passages, query):
+    words = [keyword_tokens(passage["text"]) for passage in passages]
+    return BM25Okapi(words).get_scores(keyword_tokens(query))
+
+def combine_rankings(semantic_scores, keyword_scores):
+    combined = np.zeros(len(semantic_scores))
+
+    for rank, i in enumerate(np.argsort(-semantic_scores), start=1):
+        combined[i] += 1 / (60 + rank)
+    for rank, i in enumerate(np.argsort(-keyword_scores), start=1):
+        if keyword_scores[i] > 0: combined[i] += 1 / (60 + rank)
+
+    return np.argsort(-combined)[:10]
+
 def search(query):
     folder = Path(".booksearch")
 
@@ -80,9 +99,9 @@ def search(query):
         passages = json.load(file)
 
     query_vector = encode(load_model(), [query], query=True)[0]
-    scores = vectors @ query_vector
-
-    best_matches = np.argsort(scores)[::-1][:10]
+    semantic_scores = vectors @ query_vector
+    keyword_scores = bm25_scores(passages, query)
+    best_matches = combine_rankings(semantic_scores, keyword_scores)
 
     for i in best_matches:
         print(passages[i]["text"], end="\n\n")
@@ -99,4 +118,5 @@ def main():
     else:
         search(args.query)
 
-main()
+if __name__ == "__main__":
+    main()
