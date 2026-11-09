@@ -6,6 +6,8 @@ import numpy as np
 import spacy
 from rank_bm25 import BM25Okapi
 
+MODEL = "jinaai/jina-embeddings-v5-text-nano"
+
 def tokenizer():
     import tiktoken
     return tiktoken.get_encoding('cl100k_base')
@@ -47,19 +49,17 @@ def chunk_text(text, tokenizer, size=250):
 def load_model():
     import torch
     from sentence_transformers import SentenceTransformer
-    
-    model_folder = Path("qwen_model")
 
-    if not model_folder.exists():
-        model = SentenceTransformer("Qwen/Qwen3-Embedding-0.6B")
-        model.save(str(model_folder))
-    return SentenceTransformer(str(model_folder), local_files_only=True, model_kwargs={"dtype": torch.float32})
+    device = "mps" if torch.backends.mps.is_available() else "cpu"
+    return SentenceTransformer(MODEL, trust_remote_code=True, device=device,
+                               cache_folder=".booksearch/huggingface/hub",
+                               model_kwargs={"dtype": torch.float32})
 
 def encode(model, texts, query=False):
-    if query:
-        prompt="Instruction: Given a question about a book, retrieve passages that answer the question.\nQuestion: "
-        texts = [prompt + text for text in texts]
-    return np.asarray(model.encode(texts, batch_size=8, normalize_embeddings=True, show_progress_bar=not query), dtype=np.float32)
+    prompt = "query" if query else "document"
+    return np.asarray(model.encode(texts, task="retrieval", prompt_name=prompt,
+                                  batch_size=8, normalize_embeddings=True,
+                                  show_progress_bar=not query), dtype=np.float32)
 
 
 def index_book(txt_path):
@@ -72,6 +72,7 @@ def index_book(txt_path):
     np.save(folder / "vectors.npy", vectors)
     with open(folder / "passages.json", "w") as file:
         json.dump(passages, file)
+    (folder / "model.txt").write_text(MODEL, encoding="utf-8")
 
 def keyword_tokens(text):
     return re.findall(r"\w+", text.lower()) # Separates into a list of words
@@ -92,6 +93,8 @@ def combine_rankings(semantic_scores, keyword_scores):
 
 def search(query):
     folder = Path(".booksearch")
+    if not (folder / "model.txt").exists() or (folder / "model.txt").read_text(encoding="utf-8") != MODEL:
+        raise ValueError("Uses a different embedding model")
 
     vectors = np.load(folder / "vectors.npy")
 
