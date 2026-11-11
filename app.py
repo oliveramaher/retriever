@@ -5,6 +5,7 @@ import numpy as np
 from embeddings import MODEL, load_model, encode
 from segmentation import tokenizer, extract_text, chunk_text
 from rankings import bm25_scores, combine_rankings
+from reranker import load_reranker, rerank
 
 def index_book(txt_path):
     model = load_model()
@@ -32,7 +33,9 @@ def search(query):
     query_vector = encode(load_model(), [query], query=True)[0]
     semantic_scores = vectors @ query_vector
     keyword_scores = bm25_scores(passages, query)
-    best_matches = combine_rankings(semantic_scores, keyword_scores)
+    best_matches = combine_rankings(semantic_scores, keyword_scores, limit=20)
+    candidates = [passages[i] for i in best_matches]
+    results = rerank(query, candidates, load_reranker())
 
-    for i in best_matches:
-        print(passages[i]["text"], end="\n\n")
+    for passage in results:
+        print(passage["text"], end="\n\n")

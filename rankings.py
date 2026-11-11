@@ -9,7 +9,7 @@ def bm25_scores(passages, query):
     words = [keyword_tokens(passage["text"]) for passage in passages]
     return BM25Okapi(words).get_scores(keyword_tokens(query))
 
-def combine_rankings(semantic_scores, keyword_scores):
+def combine_rankings(semantic_scores, keyword_scores, limit=10):
     combined = np.zeros(len(semantic_scores))
 
     for rank, i in enumerate(np.argsort(-semantic_scores), start=1):
@@ -17,4 +17,4 @@ def combine_rankings(semantic_scores, keyword_scores):
     for rank, i in enumerate(np.argsort(-keyword_scores), start=1):
         if keyword_scores[i] > 0: combined[i] += 1 / (60 + rank)
 
-    return np.argsort(-combined)[:10]
+    return np.argsort(-combined)[:limit]
