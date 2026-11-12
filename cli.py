@@ -1,4 +1,8 @@
 import argparse
+import os
+
+# Store custom model code alongside the other local model files.
+os.environ.setdefault("HF_MODULES_CACHE", ".booksearch/huggingface/modules")
 
 from app import index_book, search
 
@@ -7,9 +11,11 @@ def main():
     parser = argparse.ArgumentParser()
     commands = parser.add_subparsers(dest='command', required=True)
     commands.add_parser('index').add_argument('txt') # Index method takes a .txt
-    commands.add_parser('search').add_argument('query') # Query method takes a str
+    search_parser = commands.add_parser('search')
+    search_parser.add_argument('query')
+    search_parser.add_argument('--verify', action='store_true', help='Check a claim and trim supported passages')
     args = parser.parse_args()
     if args.command == 'index':
         index_book(args.txt)
     else:
-        search(args.query)
+        search(args.query, verify=args.verify)

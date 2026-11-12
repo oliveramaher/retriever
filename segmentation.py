@@ -148,7 +148,7 @@ def paragraph_chunking(text, tokenizer, size=100, allow_below_size=True):
     groups.reverse()
     return groups
 
-def chunk_text(text, tokenizer, size=100, overlap=0.5):
+def paragraph_based_chunks(text, tokenizer, size=100, overlap=0.5):
     # Call paragraph_chunking
     groups = paragraph_chunking(text, tokenizer, size)
     
@@ -159,3 +159,38 @@ def chunk_text(text, tokenizer, size=100, overlap=0.5):
         chunks.extend(sentence_chunking(group, tokenizer, size, overlap, group_start, doc))
 
     return chunks
+
+
+def sentence_window_chunks(text, tokenizer, size=100, overlap=0.5):
+    """Make overlapping sentence windows across paragraph boundaries."""
+    if size <= 0 or not 0 <= overlap < 1:
+        raise ValueError("size must be positive and overlap must be between 0 and 1")
+    sentences = [s for s in nlp(text).sents if s.text.strip()]
+    # Prefix totals let us count any range without encoding it again.
+    totals = [0]
+    for sentence in sentences:
+        totals.append(totals[-1] + len(tokenizer.encode(sentence.text)))
+
+    chunks = []
+    start = 0
+    while start < len(sentences):
+        # Add sentences until crossing the target, then choose the closer end.
+        end = start + 1
+        while end < len(sentences) and totals[end] - totals[start] < size:
+            end += 1
+        if end > start + 1 and abs(totals[end - 1] - totals[start] - size) <= abs(totals[end] - totals[start] - size):
+            end -= 1
+        first, last = sentences[start].start_char, sentences[end - 1].end_char
+        chunks.append({'text': text[first:last], 'text_position': (first, last)})
+        if end == len(sentences):
+            break
+        # Move roughly (1 - overlap) of the chunk, at least one sentence.
+        advance = (totals[end] - totals[start]) * (1 - overlap)
+        next_start = min(range(start + 1, end + 1),
+                         key=lambda i: abs(totals[i] - totals[start] - advance))
+        start = next_start
+    return chunks
+
+
+def chunk_text(text, tokenizer, size=100, overlap=0.5):
+    return sentence_window_chunks(text, tokenizer, size, overlap)

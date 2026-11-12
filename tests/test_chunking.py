@@ -35,6 +35,13 @@ class ChunkingTests(unittest.TestCase):
         for name in ['Alice', 'Bob', 'Carol', 'Daisy', 'Edward', 'Fiona']:
             self.assertTrue(any(name in chunk['text'] for chunk in chunks))
 
+    def test_sentence_windows_cross_paragraph_boundaries(self):
+        text = 'Tom spoke. He joked.\n\nMyrtle replied. Tom finished. Another sentence.'
+        chunks = booksearch.sentence_window_chunks(text, WordTokenizer(), size=6, overlap=0.5)
+        self.assertTrue(any('He joked.' in c['text'] and 'Myrtle replied.' in c['text'] for c in chunks))
+        for chunk in chunks:
+            self.assertEqual(chunk['text'], text[slice(*chunk['text_position'])])
+
     def test_final_sentence_and_empty_text(self):
         text = 'One sentence. Another sentence. A final sentence.'
         chunks = booksearch.chunk_text(text, WordTokenizer(), size=4)

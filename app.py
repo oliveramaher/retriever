@@ -20,7 +20,7 @@ def index_book(txt_path):
         json.dump(passages, file)
     (folder / "model.txt").write_text(MODEL, encoding="utf-8")
 
-def search(query):
+def search(query, verify=False):
     folder = Path(".booksearch")
     if not (folder / "model.txt").exists() or (folder / "model.txt").read_text(encoding="utf-8") != MODEL:
         raise ValueError("Uses a different embedding model")
@@ -37,5 +37,15 @@ def search(query):
     candidates = [passages[i] for i in best_matches]
     results = rerank(query, candidates, load_reranker())
 
-    for passage in results:
-        print(passage["text"], end="\n\n")
+    if verify:
+        from nli import FactChecker, find_supported
+        checker = FactChecker()
+        result = find_supported(results, query, checker.score)
+        if result is None:
+            print("Not found in the first 3 passages (support not established).")
+        else:
+            print(f"Estimated support: {result['score']:.3f} | Result {result['rank']}")
+            print(result['text'])
+    else:
+        for passage in results:
+            print(passage["text"], end="\n\n")
